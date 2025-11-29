@@ -4,34 +4,18 @@
 </script>
 
 <!-- Global notification live region, render this permanently at the end of the document -->
-<div
-	aria-live="assertive"
-	class="pointer-events-none fixed inset-0 flex items-end px-4 py-6 sm:items-start sm:p-6"
->
-	<div class="flex w-full flex-col items-center space-y-4 sm:items-end">
+<div aria-live="assertive" class="notification-container">
+	<div class="notification-wrapper">
 		{#each $notifications as notification}
-			<!--
-		Notification panel, dynamically insert this into the live region when it needs to be displayed
-  
-		Entering: "transform ease-out duration-300 transition"
-		  From: "translate-y-2 opacity-0 sm:translate-y-0 sm:translate-x-2"
-		  To: "translate-y-0 opacity-100 sm:translate-x-0"
-		Leaving: "transition ease-in duration-100"
-		  From: "opacity-100"
-		  To: "opacity-0"
-	  -->
-			<div
-				class="pointer-events-auto w-full max-w-sm overflow-hidden rounded-lg bg-white shadow-lg ring-1 ring-black/5"
-				transition:fly={{ delay: 250, duration: 300, x: +100 }}
-			>
-				<div class="p-4">
-					<div class="flex items-start">
-						<div class="shrink-0">
+			<div class="notification-panel" transition:fly={{ delay: 250, duration: 300, x: +100 }}>
+				<div class="notification-content">
+					<div class="notification-header">
+						<div class="icon-container">
 							{#if notification.data.options?.icon}
 								<img src={notification.data.options.icon} alt="icon" />
 							{:else}
 								<svg
-									class="size-6 text-gray-400"
+									class="notification-icon"
 									fill="none"
 									viewBox="0 0 24 24"
 									stroke-width="1.5"
@@ -47,31 +31,31 @@
 								</svg>
 							{/if}
 						</div>
-						<div class="ml-3 w-0 flex-1 pt-0.5">
-							<p class="text-sm font-medium text-gray-900">{notification.data.title}</p>
-							<p class="mt-1 text-sm text-gray-500">{notification.data.options.body}.</p>
-							<div class="mt-3 flex space-x-7">
+						<div class="notification-text">
+							<p class="notification-title">{notification.data.title}</p>
+							<p class="notification-body">{notification.data.options.body}.</p>
+							<div class="button-container">
 								<button
 									type="button"
-									class="rounded-md bg-white text-sm font-medium text-gray-700 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+									class="notification-button"
 									onclick={() => notifications.onClick(notification.id)}>ok</button
 								>
 								<button
 									type="button"
-									class="rounded-md bg-white text-sm font-medium text-gray-700 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+									class="notification-button"
 									onclick={() => notifications.remove(notification.id)}>dismiss</button
 								>
 							</div>
 						</div>
-						<div class="ml-4 flex shrink-0">
+						<div class="close-button-container">
 							<button
 								type="button"
-								class="inline-flex rounded-md bg-white text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+								class="close-button"
 								onclick={() => notifications.remove(notification.id)}
 							>
 								<span class="sr-only">Close</span>
 								<svg
-									class="size-5"
+									class="close-icon"
 									viewBox="0 0 20 20"
 									fill="currentColor"
 									aria-hidden="true"
@@ -89,3 +73,151 @@
 		{/each}
 	</div>
 </div>
+
+<style>
+	.notification-container {
+		position: fixed;
+		inset: 0;
+		display: flex;
+		align-items: flex-end;
+		padding: 1.5rem;
+		pointer-events: none;
+	}
+
+	.notification-wrapper {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		width: 100%;
+		gap: 1rem;
+	}
+
+	.notification-panel {
+		pointer-events: auto;
+		width: 100%;
+		max-width: 24rem;
+		overflow: hidden;
+		border-radius: 0.5rem;
+		background-color: white;
+		border: 1px solid rgb(0 0 0 / 0.05);
+		box-shadow:
+			0 10px 15px -3px rgb(0 0 0 / 0.1),
+			0 4px 6px -4px rgb(0 0 0 / 0.1);
+	}
+
+	.notification-content {
+		padding: 1rem;
+	}
+
+	.notification-header {
+		display: flex;
+		align-items: flex-start;
+	}
+
+	.icon-container {
+		flex-shrink: 0;
+	}
+
+	.notification-icon {
+		width: 1.5rem;
+		height: 1.5rem;
+		color: rgb(156 163 175);
+	}
+
+	.notification-text {
+		margin-left: 0.75rem;
+		width: 0;
+		flex: 1;
+		padding-top: 0.125rem;
+	}
+
+	.notification-title {
+		font-size: 0.875rem;
+		font-weight: 500;
+		color: rgb(17 24 39);
+	}
+
+	.notification-body {
+		margin-top: 0.25rem;
+		font-size: 0.875rem;
+		color: rgb(107 114 128);
+	}
+
+	.button-container {
+		margin-top: 0.75rem;
+		display: flex;
+		gap: 1.75rem;
+	}
+
+	.notification-button {
+		border-radius: 0.375rem;
+		background-color: white;
+		font-size: 0.875rem;
+		font-weight: 500;
+		color: rgb(55 65 81);
+		border: none;
+		cursor: pointer;
+		padding: 0.5rem 1rem;
+	}
+
+	.notification-button:hover {
+		color: rgb(107 114 128);
+	}
+
+	.notification-button:focus {
+		outline: none;
+		box-shadow: 0 0 0 2px rgb(99 102 241);
+	}
+
+	.close-button-container {
+		margin-left: 1rem;
+		display: flex;
+		flex-shrink: 0;
+	}
+
+	.close-button {
+		border-radius: 0.375rem;
+		background-color: white;
+		color: rgb(156 163 175);
+		border: none;
+		cursor: pointer;
+		padding: 0.25rem;
+	}
+
+	.close-button:hover {
+		color: rgb(107 114 128);
+	}
+
+	.close-button:focus {
+		outline: none;
+		box-shadow: 0 0 0 2px rgb(99 102 241);
+	}
+
+	.close-icon {
+		width: 1.25rem;
+		height: 1.25rem;
+	}
+
+	.sr-only {
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		padding: 0;
+		margin: -1px;
+		overflow: hidden;
+		clip: rect(0, 0, 0, 0);
+		white-space: nowrap;
+		border: 0;
+	}
+
+	@media (min-width: 640px) {
+		.notification-container {
+			align-items: flex-start;
+			padding: 1.5rem;
+		}
+
+		.notification-wrapper {
+			align-items: flex-end;
+		}
+	}
+</style>
