@@ -12,6 +12,10 @@ node_modules
 .DS_Store
 Thumbs.db
 
+# pwag
+static/pwa
+src/app.html
+
 # Env
 .env
 .env.*
